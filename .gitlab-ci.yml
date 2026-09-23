@@ -1,0 +1,34 @@
+cat << 'EOF' > .gitlab-ci.yml
+stages:
+- build
+
+build_twrp:
+stage: build
+image: ubuntu:20.04
+variables:
+DEBIAN_FRONTEND: noninteractive
+before_script:
+- apt-get update
+- apt-get install -y git-core gnupg flex bison build-essential zip curl zlib1g-dev libc6-dev-i386 libncurses5 libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig python3 python-is-python3 rsync
+- mkdir -p ~/bin
+- curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+- chmod a+x ~/bin/repo
+- export PATH=~/bin:$PATH
+script:
+- export PATH=~/bin:$PATH
+- mkdir -p /build/twrp
+- cd /build/twrp
+- repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+- repo sync -c -j$(nproc) --force-sync --no-clone-bundle --no-tags
+- mkdir -p device/alps/k65v1_64_bsp
+- cp -r $CI_PROJECT_DIR/* device/alps/k65v1_64_bsp/
+- source build/envsetup.sh
+- lunch omni_k65v1_64_bsp-eng || lunch twrp_k65v1_64_bsp-eng
+- mka recoveryimage -j$(nproc)
+- cp out/target/product/k65v1_64_bsp/recovery.img $CI_PROJECT_DIR/recovery.img
+artifacts:
+name: "TWRP-k65v1_64_bsp"
+paths:
+  - recovery.img
+expire_in: 1 week
+EOF
