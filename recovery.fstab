@@ -1,0 +1,9 @@
+# Android fstab file for MediaTek MT6765 (Dynamic Partitions / Android 15)
+/system         erofs     system                                     flags=display=System;logical
+/system_ext     erofs     system_ext                                 flags=display=System_ext;logical
+/product        erofs     product                                    flags=display=Product;logical
+/vendor         erofs     vendor                                     flags=display=Vendor;logical
+/boot           emmc      /dev/block/by-name/boot                    flags=display=Boot;backup=1;flashimg=1
+/init_boot      emmc      /dev/block/by-name/init_boot               flags=display=Init_Boot;backup=1;flashimg=1
+/data           f2fs      /dev/block/by-name/userdata                flags=display=Data
+/metadata       ext4      /dev/block/by-name/metadata                flags=display=Metadata
