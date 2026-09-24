@@ -39,9 +39,11 @@ jobs:
           export PATH=~/bin:$PATH
           cd /home/runner/work/twrp
           mkdir -p device/alps/k65v1_64_bsp
-          cp -r $GITHUB_WORKSPACE/* device/alps/k65v1_64_bsp/
+          rsync -av --exclude='.git' --exclude='.github' $GITHUB_WORKSPACE/ device/alps/k65v1_64_bsp/
+          export ALLOW_MISSING_DEPENDENCIES=true
+          export TW_DEFAULT_LANGUAGE="en"
           source build/envsetup.sh
-          lunch omni_k65v1_64_bsp-eng || lunch twrp_k65v1_64_bsp-eng
+          lunch omni_k65v1_64_bsp-eng
           mka recoveryimage -j$(nproc)
           cp out/target/product/k65v1_64_bsp/recovery.img $GITHUB_WORKSPACE/recovery.img
 
